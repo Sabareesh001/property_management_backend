@@ -2,7 +2,9 @@ const prisma = require("../model/prisma")
 
 exports.getAllUsers = async(req,res)=>{
     try {
-   const result = await prisma.users.findMany();
+   const result = await prisma.users.findMany({where:{
+    is_active:true
+  }});
         res.send(result);
     } catch (error) {
         res.status(500).send(error.message || 'Couldnt fetch Users');
@@ -16,7 +18,8 @@ exports.getUserById = async(req,res) =>{
             throw({statusCode:400,response:{message:'Invalid User Id'}})
         }
         const result = await prisma.users.findUnique({where:{
-            id: id
+            id: id,
+            is_active:true
         }})
         if(!result){
             throw({statusCode:400,response:{message:'Invalid User Id'}})

@@ -7,16 +7,16 @@ const createUsers = async()=>{
 const createMasterRevenueType =  async()=>{
       await prisma.master_revenue_types.createMany({data:[
             {
-                  name:'lease'
+                  name:'Lease'
             },
             {
-                  name:'sales'
+                  name:'Sales'
             },
             {
-                  name:'manage'
+                  name:'Manage'
             },
             {
-                  name:'stay'
+                  name:'Stay'
             }
       ]})
 }
@@ -141,10 +141,9 @@ const createPropertyUnits = async(companyId,primary_pricing,secondary_pricing,on
                         bhk:2,
                         area_in_sqft:2000,
                         main_image:"https://www.freise-rechtsanwaelte.de/wp-content/uploads/2016/09/MietundWohnungseigentumsrecht-1.jpg",
-                        image_list:"https://static.wixstatic.com/media/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg/v1/fill/w_1111,h_922,al_c,q_85,enc_auto/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg,https://static.wixstatic.com/media/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg/v1/fill/w_1111,h_922,al_c,q_85,enc_auto/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg,https://static.wixstatic.com/media/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg/v1/fill/w_1111,h_922,al_c,q_85,enc_auto/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg,https://static.wixstatic.com/media/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg/v1/fill/w_1111,h_922,al_c,q_85,enc_auto/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg,https://static.wixstatic.com/media/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg/v1/fill/w_1111,h_922,al_c,q_85,enc_auto/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg,https://static.wixstatic.com/media/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg/v1/fill/w_1111,h_922,al_c,q_85,enc_auto/da9db4_f7d5616f571847ffa85e826b279951d6~mv2.jpg",
+                        image_list:"https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp,https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp,https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp,https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp,https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp,https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp,https://photos.zillowstatic.com/fp/015ed0c398bb9156fabd3088d39c4155-cc_ft_768.webp",
                         primary_pricing_id:primary_pricing,
                         secondary_pricing_id:secondary_pricing,
-
                         one_time_cost_pricing_id:one_time_cost_pricing,
                         refundables_pricing_id:refundables_pricing,
                         inventory_pricing_id:inventory_pricing,
