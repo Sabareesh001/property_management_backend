@@ -1,0 +1,595 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model admins {
+  id          Int       @id @default(autoincrement())
+  user_id     String    @unique @db.Uuid
+  deleted_at  DateTime? @db.Timestamp(6)
+  deleted_by  String?   @db.Uuid
+  created_by  String?   @db.Uuid
+  is_customer Boolean?
+  created_at  DateTime? @db.Timestamp(6)
+  is_active   Boolean?  @default(true)
+  users       users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model amenities {
+  id                             String  @default(uuid())                          @id @db.Uuid
+  name                           String?                          @db.VarChar
+  price                          Decimal?                         @db.Decimal(10, 2)
+  is_free                        Boolean?
+  deleted_at                     DateTime?                        @db.Timestamp(6)
+  deleted_by                     String?                          @db.Uuid
+  created_by                     String?                          @db.Uuid
+  created_at                     DateTime?                        @db.Timestamp(6)
+  is_active                      Boolean?                         @default(true)
+  property_unit_amenities        property_unit_amenities[]
+  quoted_property_unit_amenities quoted_property_unit_amenities[]
+}
+
+model companies {
+  id             String           @id @db.Uuid @default(uuid())
+  name           String?          @db.VarChar
+  deleted_at     DateTime?        @db.Timestamp(6)
+  deleted_by     String?          @db.Uuid
+  created_by     String?          @db.Uuid
+  created_at     DateTime?        @db.Timestamp(6)
+  is_active      Boolean?         @default(true)
+  property_units property_units[]
+}
+
+model inventory_pricing {
+  id                                        String                         @id @db.Uuid @default(uuid())
+  revenue_type                              Int
+  pricing_component                         Int
+  tax_group                                 Int
+  component_based_on                        Int
+  item_unit_price                           Decimal?                       @db.Decimal(10, 2)
+  quantity                                  Int?
+  discount                                  Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                DateTime?                      @db.Timestamp(6)
+  deleted_by                                String?                        @db.Uuid
+  created_by                                String?                        @db.Uuid
+  created_at                                DateTime?                      @db.Timestamp(6)
+  is_active                                 Boolean?                       @default(true)
+  master_components_based_ons               master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_inventory_pricing_created_byTousers users?                         @relation("inventory_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_inventory_pricing_deleted_byTousers users?                         @relation("inventory_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types            master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                      master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                         master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  property_units                            property_units[]
+}
+
+model master_components_based_ons {
+  id                           Int                            @id @default(autoincrement()) 
+  name                         String?                        @db.VarChar
+  is_active                    Boolean?                       @default(true)
+  inventory_pricing            inventory_pricing[]
+  one_time_cost_pricing        one_time_cost_pricing[]
+  parking_pricing              parking_pricing[]
+  primary_pricing              primary_pricing[]
+  quoted_inventory_pricing     quoted_inventory_pricing[]
+  quoted_one_time_cost_pricing quoted_one_time_cost_pricing[]
+  quoted_parking_pricing       quoted_parking_pricing[]
+  quoted_primary_pricing       quoted_primary_pricing[]
+  quoted_refundables_pricing   quoted_refundables_pricing[]
+  quoted_secondary_pricing     quoted_secondary_pricing[]
+  refundables_pricing          refundables_pricing[]
+  secondary_pricing            secondary_pricing[]
+}
+
+model master_pricing_component_types {
+  id                           Int                            @id @default(autoincrement())
+  name                         String?                        @db.VarChar
+  is_active                    Boolean?                       @default(true)
+  inventory_pricing            inventory_pricing[]
+  one_time_cost_pricing        one_time_cost_pricing[]
+  parking_pricing              parking_pricing[]
+  primary_pricing              primary_pricing[]
+  quoted_inventory_pricing     quoted_inventory_pricing[]
+  quoted_one_time_cost_pricing quoted_one_time_cost_pricing[]
+  quoted_parking_pricing       quoted_parking_pricing[]
+  quoted_primary_pricing       quoted_primary_pricing[]
+  quoted_refundables_pricing   quoted_refundables_pricing[]
+  quoted_secondary_pricing     quoted_secondary_pricing[]
+  refundables_pricing          refundables_pricing[]
+  secondary_pricing            secondary_pricing[]
+}
+
+model master_revenue_types {
+  id                           Int                            @id @default(autoincrement())
+  name                         String?                        @db.VarChar
+  is_active                    Boolean?                       @default(true)
+  inventory_pricing            inventory_pricing[]
+  one_time_cost_pricing        one_time_cost_pricing[]
+  parking_pricing              parking_pricing[]
+  primary_pricing              primary_pricing[]
+  quoted_inventory_pricing     quoted_inventory_pricing[]
+  quoted_one_time_cost_pricing quoted_one_time_cost_pricing[]
+  quoted_parking_pricing       quoted_parking_pricing[]
+  quoted_primary_pricing       quoted_primary_pricing[]
+  quoted_refundables_pricing   quoted_refundables_pricing[]
+  quoted_secondary_pricing     quoted_secondary_pricing[]
+  refundables_pricing          refundables_pricing[]
+  secondary_pricing            secondary_pricing[]
+}
+
+model master_tax_groups {
+  id                           Int                            @id @default(autoincrement())
+  name                         String?                        @db.VarChar
+  is_active                    Boolean?                       @default(true)
+  inventory_pricing            inventory_pricing[]
+  one_time_cost_pricing        one_time_cost_pricing[]
+  parking_pricing              parking_pricing[]
+  primary_pricing              primary_pricing[]
+  quoted_inventory_pricing     quoted_inventory_pricing[]
+  quoted_one_time_cost_pricing quoted_one_time_cost_pricing[]
+  quoted_parking_pricing       quoted_parking_pricing[]
+  quoted_primary_pricing       quoted_primary_pricing[]
+  quoted_refundables_pricing   quoted_refundables_pricing[]
+  quoted_secondary_pricing     quoted_secondary_pricing[]
+  refundables_pricing          refundables_pricing[]
+  secondary_pricing            secondary_pricing[]
+}
+
+model one_time_cost_pricing {
+  id                                            String                         @id @db.Uuid @default(uuid())
+  revenue_type                                  Int
+  pricing_component                             Int
+  tax_group                                     Int
+  component_based_on                            Int
+  uom_value                                     Decimal?                       @db.Decimal(10, 2)
+  discount                                      Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                    DateTime?                      @db.Timestamp(6)
+  deleted_by                                    String?                        @db.Uuid
+  created_by                                    String?                        @db.Uuid
+  created_at                                    DateTime?                      @db.Timestamp(6)
+  is_active                                     Boolean?                       @default(true)
+  master_components_based_ons                   master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_one_time_cost_pricing_created_byTousers users?                         @relation("one_time_cost_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_one_time_cost_pricing_deleted_byTousers users?                         @relation("one_time_cost_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                          master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                             master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  property_units                                property_units[]
+}
+
+model parking_pricing {
+  id                                      String                         @id @db.Uuid @default(uuid())
+  revenue_type                            Int
+  pricing_component                       Int
+  tax_group                               Int
+  component_based_on                      Int
+  is_changable                            Boolean?
+  uom_value                               Decimal?                       @db.Decimal(10, 2)
+  discount                                Decimal?                       @db.Decimal(10, 2)
+  deleted_at                              DateTime?                      @db.Timestamp(6)
+  deleted_by                              String?                        @db.Uuid
+  created_by                              String?                        @db.Uuid
+  created_at                              DateTime?                      @db.Timestamp(6)
+  is_active                               Boolean?                       @default(true)
+  master_components_based_ons             master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_parking_pricing_created_byTousers users?                         @relation("parking_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_parking_pricing_deleted_byTousers users?                         @relation("parking_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types          master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                    master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                       master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  property_units                          property_units[]
+}
+
+model primary_pricing {
+  id                                      String                         @id @db.Uuid @default(uuid())
+  revenue_type                            Int 
+  pricing_component                       Int
+  tax_group                               Int
+  component_based_on                      Int
+  uom_value                               Decimal?                       @db.Decimal(10, 2)
+  maximum                                 Decimal?                       @db.Decimal(10, 2)
+  minimum                                 Decimal?                       @db.Decimal(10, 2)
+  recommended                             Decimal?                       @db.Decimal(10, 2)
+  discount                                Decimal?                       @db.Decimal(10, 2)
+  deleted_at                              DateTime?                      @db.Timestamp(6)
+  deleted_by                              String?                        @db.Uuid
+  created_by                              String?                        @db.Uuid
+  created_at                              DateTime?                      @db.Timestamp(6)
+  is_active                               Boolean?                       @default(true)
+  master_components_based_ons             master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_primary_pricing_created_byTousers users?                         @relation("primary_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_primary_pricing_deleted_byTousers users?                         @relation("primary_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types          master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                    master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                       master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  property_units                          property_units?
+}
+
+model property_unit_amenities {
+  id               String         @id @db.Uuid  @default(uuid())
+  property_unit_id String         @db.Uuid
+  amenity_id       String         @db.Uuid
+  deleted_at       DateTime?      @db.Timestamp(6)
+  deleted_by       String?        @db.Uuid
+  created_by       String?        @db.Uuid
+  created_at       DateTime?      @db.Timestamp(6)
+  is_active        Boolean?       @default(true)
+  amenities        amenities      @relation(fields: [amenity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  property_units   property_units @relation(fields: [property_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model property_unit_utilities {
+  id               String         @unique @db.Uuid  @default(uuid())
+  property_unit_id String         @db.Uuid
+  utility_id       String         @db.Uuid
+  deleted_at       DateTime?      @db.Timestamp(6)
+  deleted_by       String?        @db.Uuid
+  created_by       String?        @db.Uuid
+  created_at       DateTime?      @db.Timestamp(6)
+  is_active        Boolean?       @default(true)
+  property_units   property_units @relation(fields: [property_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  utilities        utilities      @relation(fields: [utility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model property_units {
+  id                                     String                    @id @db.Uuid  @default(uuid())
+  name                                   String?                   @db.VarChar
+  unit_id                                String?                   @db.VarChar
+  address                                String?                   @db.VarChar
+  company                                String                    @db.Uuid
+  beds                                   Int?
+  baths                                  Int?
+  bhk                                    Int?
+  area_in_sqft                           Decimal?                  @db.Decimal(10, 2)
+  price_in_aed                           Decimal?                  @db.Decimal(10, 2)
+  main_image                             String?                   @db.VarChar
+  image_list                             String?                   @db.VarChar
+  primary_pricing_id                     String                    @unique @db.Uuid
+  secondary_pricing_id                   String?                   @db.Uuid
+  one_time_cost_pricing_id               String?                   @db.Uuid
+  refundables_pricing_id                 String?                   @db.Uuid
+  inventory_pricing_id                   String?                   @db.Uuid
+  parking_pricing_id                     String?                   @db.Uuid
+  is_deleted                             Boolean?
+  deleted_at                             DateTime?                 @db.Timestamp(6)
+  deleted_by                             String?                   @db.Uuid
+  created_by                             String?                   @db.Uuid
+  created_at                             DateTime?                 @db.Timestamp(6)
+  is_active                              Boolean?                  @default(true)
+  property_unit_amenities                property_unit_amenities[]
+  property_unit_utilities                property_unit_utilities[]
+  companies                              companies                 @relation(fields: [company], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_property_units_created_byTousers users?                    @relation("property_units_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_property_units_deleted_byTousers users?                    @relation("property_units_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  inventory_pricing                      inventory_pricing?        @relation(fields: [inventory_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  one_time_cost_pricing                  one_time_cost_pricing?    @relation(fields: [one_time_cost_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parking_pricing                        parking_pricing?          @relation(fields: [parking_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  primary_pricing                        primary_pricing           @relation(fields: [primary_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  refundables_pricing                    refundables_pricing?      @relation(fields: [refundables_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  secondary_pricing                      secondary_pricing?        @relation(fields: [secondary_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quotations                             quotations[]
+  quoted_property_units                  quoted_property_units?
+}
+
+model quotations {
+  id                    String                @id @db.Uuid @default(uuid())
+  quoted_property_id    String                @db.Uuid
+  original_property_id  String                @db.Uuid
+  user_id               String                @unique @db.Uuid
+  grace_period          Int?
+  lease_start_date      DateTime?             @db.Timestamp(6)
+  lease_end_date        DateTime?             @db.Timestamp(6)
+  rent_start_date       DateTime?             @db.Timestamp(6)
+  deleted_at            DateTime?             @db.Timestamp(6)
+  deleted_by            String?               @db.Uuid
+  created_by            String?               @db.Uuid
+  created_at            DateTime?             @db.Timestamp(6)
+  is_active             Boolean?              @default(true)
+  property_units        property_units        @relation(fields: [original_property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_property_units quoted_property_units @relation(fields: [quoted_property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                 users                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quoted_inventory_pricing {
+  id                                               String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                     Int
+  pricing_component                                Int
+  tax_group                                        Int
+  component_based_on                               Int
+  item_unit_price                                  Decimal?                       @db.Decimal(10, 2)
+  quantity                                         Int?
+  discount                                         Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                       DateTime?                      @db.Timestamp(6)
+  deleted_by                                       String?                        @db.Uuid
+  created_by                                       String?                        @db.Uuid
+  created_at                                       DateTime?                      @db.Timestamp(6)
+  is_active                                        Boolean?                       @default(true)
+  master_components_based_ons                      master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_inventory_pricing_created_byTousers users?                         @relation("quoted_inventory_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_inventory_pricing_deleted_byTousers users?                         @relation("quoted_inventory_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                   master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                             master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                                master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quoted_one_time_cost_pricing {
+  id                                                   String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                         Int
+  pricing_component                                    Int
+  tax_group                                            Int
+  component_based_on                                   Int
+  uom_value                                            Decimal?                       @db.Decimal(10, 2)
+  discount                                             Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                           DateTime?                      @db.Timestamp(6)
+  deleted_by                                           String?                        @db.Uuid
+  created_by                                           String?                        @db.Uuid
+  created_at                                           DateTime?                      @db.Timestamp(6)
+  is_active                                            Boolean?                       @default(true)
+  master_components_based_ons                          master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_one_time_cost_pricing_created_byTousers users?                         @relation("quoted_one_time_cost_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_one_time_cost_pricing_deleted_byTousers users?                         @relation("quoted_one_time_cost_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                       master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                                 master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                                    master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_property_units                                quoted_property_units[]
+}
+
+model quoted_parking_pricing {
+  id                                             String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                   Int
+  pricing_component                              Int
+  tax_group                                      Int
+  component_based_on                             Int
+  changable                                      Int
+  uom_value                                      Decimal?                       @db.Decimal(10, 2)
+  discount                                       Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                     DateTime?                      @db.Timestamp(6)
+  deleted_by                                     String?                        @db.Uuid
+  created_by                                     String?                        @db.Uuid
+  created_at                                     DateTime?                      @db.Timestamp(6)
+  is_active                                      Boolean?                       @default(true)
+  master_components_based_ons                    master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_parking_pricing_created_byTousers users?                         @relation("quoted_parking_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_parking_pricing_deleted_byTousers users?                         @relation("quoted_parking_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                 master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                           master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                              master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_property_units                          quoted_property_units[]
+}
+
+model quoted_primary_pricing {
+  id                                             String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                   Int
+  pricing_component                              Int
+  tax_group                                      Int
+  component_based_on                             Int
+  uom_value                                      Decimal?                       @db.Decimal(10, 2)
+  maximum                                        Decimal?                       @db.Decimal(10, 2)
+  minimum                                        Decimal?                       @db.Decimal(10, 2)
+  recommended                                    Decimal?                       @db.Decimal(10, 2)
+  discount                                       Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                     DateTime?                      @db.Timestamp(6)
+  deleted_by                                     String?                        @db.Uuid
+  created_by                                     String?                        @db.Uuid
+  created_at                                     DateTime?                      @db.Timestamp(6)
+  is_active                                      Boolean?                       @default(true)
+  master_components_based_ons                    master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_primary_pricing_created_byTousers users?                         @relation("quoted_primary_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_primary_pricing_deleted_byTousers users?                         @relation("quoted_primary_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                 master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                           master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                              master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_property_units                          quoted_property_units?
+}
+
+model quoted_property_unit_amenities {
+  id                      String                @id @db.Uuid  @default(uuid())
+  quoted_property_unit_id String                @db.Uuid
+  amenity_id              String                @db.Uuid
+  is_free                 Boolean?
+  deleted_at              DateTime?             @db.Timestamp(6)
+  deleted_by              String?               @db.Uuid
+  created_by              String?               @db.Uuid
+  created_at              DateTime?             @db.Timestamp(6)
+  is_active               Boolean?              @default(true)
+  amenities               amenities             @relation(fields: [amenity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_property_units   quoted_property_units @relation(fields: [quoted_property_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quoted_property_unit_utilities {
+  id                      String                @id @db.Uuid  @default(uuid())
+  quoted_property_unit_id String                @db.Uuid
+  utility_id              String                @db.Uuid
+  is_free                 Boolean?
+  deleted_at              DateTime?             @db.Timestamp(6)
+  deleted_by              String?               @db.Uuid
+  created_by              String?               @db.Uuid
+  created_at              DateTime?             @db.Timestamp(6)
+  is_active               Boolean?              @default(true)
+  quoted_property_units   quoted_property_units @relation(fields: [quoted_property_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  utilities               utilities             @relation(fields: [utility_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quoted_property_units {
+  id                             String                           @id @db.Uuid  @default(uuid())
+  name                           String?                          @db.VarChar
+  property_id                    String                           @unique @db.Uuid
+  unit_id                        String?                          @db.VarChar
+  address                        String?                          @db.VarChar
+  company                        String                           @db.Uuid
+  beds                           Int?
+  baths                          Int?
+  bhk                            Int?
+  area_in_sqft                   Decimal?                         @db.Decimal(10, 2)
+  price_in_aed                   Decimal?                         @db.Decimal(10, 2)
+  main_image                     String?                          @db.VarChar
+  image_list                     String?                          @db.VarChar
+  primary_pricing_id             String                           @unique @db.Uuid
+  secondary_pricing_id           String?                          @db.Uuid
+  one_time_cost_pricing_id       String?                          @db.Uuid
+  refundables_pricing_id         String?                          @db.Uuid
+  inventory_pricing_id           String?                          @db.Uuid
+  parking_pricing_id             String?                          @db.Uuid
+  is_deleted                     Boolean?
+  deleted_at                     DateTime?                        @db.Timestamp(6)
+  deleted_by                     String?                          @db.Uuid
+  created_by                     String?                          @db.Uuid
+  created_at                     DateTime?                        @db.Timestamp(6)
+  is_active                      Boolean?                         @default(true)
+  quotations                     quotations[]
+  quoted_property_unit_amenities quoted_property_unit_amenities[]
+  quoted_property_unit_utilities quoted_property_unit_utilities[]
+  quoted_one_time_cost_pricing   quoted_one_time_cost_pricing?    @relation(fields: [one_time_cost_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_parking_pricing         quoted_parking_pricing?          @relation(fields: [parking_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_primary_pricing         quoted_primary_pricing           @relation(fields: [primary_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  property_units                 property_units                   @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_refundables_pricing     quoted_refundables_pricing?      @relation(fields: [refundables_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  quoted_secondary_pricing       quoted_secondary_pricing?        @relation(fields: [secondary_pricing_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quoted_refundables_pricing {
+  id                                                 String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                       Int
+  pricing_component                                  Int
+  tax_group                                          Int
+  component_based_on                                 Int
+  uom_value                                          Decimal?                       @db.Decimal(10, 2)
+  discount                                           Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                         DateTime?                      @db.Timestamp(6)
+  deleted_by                                         String?                        @db.Uuid
+  created_by                                         String?                        @db.Uuid
+  created_at                                         DateTime?                      @db.Timestamp(6)
+  is_active                                          Boolean?                       @default(true)
+  quoted_property_units                              quoted_property_units[]
+  master_components_based_ons                        master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_refundables_pricing_created_byTousers users?                         @relation("quoted_refundables_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_refundables_pricing_deleted_byTousers users?                         @relation("quoted_refundables_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                     master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                               master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                                  master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model quoted_secondary_pricing {
+  id                                               String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                     Int
+  pricing_component                                Int
+  tax_group                                        Int
+  component_based_on                               Int
+  uom_value                                        Decimal?                       @db.Decimal(10, 2)
+  discount                                         Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                       DateTime?                      @db.Timestamp(6)
+  deleted_by                                       String?                        @db.Uuid
+  created_by                                       String?                        @db.Uuid
+  created_at                                       DateTime?                      @db.Timestamp(6)
+  is_active                                        Boolean?                       @default(true)
+  quoted_property_units                            quoted_property_units[]
+  master_components_based_ons                      master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_secondary_pricing_created_byTousers users?                         @relation("quoted_secondary_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_quoted_secondary_pricing_deleted_byTousers users?                         @relation("quoted_secondary_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types                   master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                             master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                                master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model refundables_pricing {
+  id                                          String                         @id @db.Uuid  @default(uuid())
+  revenue_type                                Int
+  pricing_component                           Int
+  tax_group                                   Int
+  component_based_on                          Int
+  uom_value                                   Decimal?                       @db.Decimal(10, 2)
+  discount                                    Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                  DateTime?                      @db.Timestamp(6)
+  deleted_by                                  String?                        @db.Uuid
+  created_by                                  String?                        @db.Uuid
+  created_at                                  DateTime?                      @db.Timestamp(6)
+  is_active                                   Boolean?                       @default(true)
+  property_units                              property_units[]
+  master_components_based_ons                 master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_refundables_pricing_created_byTousers users?                         @relation("refundables_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_refundables_pricing_deleted_byTousers users?                         @relation("refundables_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types              master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                        master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                           master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model secondary_pricing {
+  id                                        String                         @id @db.Uuid  @default(uuid())
+  revenue_type                              Int
+  pricing_component                         Int
+  tax_group                                 Int
+  component_based_on                        Int
+  uom_value                                 Decimal?                       @db.Decimal(10, 2)
+  discount                                  Decimal?                       @db.Decimal(10, 2)
+  deleted_at                                DateTime?                      @db.Timestamp(6)
+  deleted_by                                String?                        @db.Uuid
+  created_by                                String?                        @db.Uuid
+  created_at                                DateTime?                      @db.Timestamp(6)
+  is_active                                 Boolean?                       @default(true)
+  property_units                            property_units[]
+  master_components_based_ons               master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_secondary_pricing_created_byTousers users?                         @relation("secondary_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_secondary_pricing_deleted_byTousers users?                         @relation("secondary_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_component_types            master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_revenue_types                      master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_tax_groups                         master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model users {
+  id                                                                          String                         @id @db.Uuid  @default(uuid())
+  name                                                                        String?                        @db.VarChar
+  mobile_no                                                                   String?                        @db.VarChar
+  email                                                                       String?                        @db.VarChar
+  deleted_at                                                                  DateTime?                      @db.Timestamp(6)
+  deleted_by                                                                  String?                        @db.Uuid
+  created_by                                                                  String?                        @db.Uuid
+  is_customer                                                                 Boolean?
+  created_at                                                                  DateTime?                      @db.Timestamp(6)
+  is_active                                                                   Boolean?                       @default(true)
+  admins                                                                      admins?
+  inventory_pricing_inventory_pricing_created_byTousers                       inventory_pricing[]            @relation("inventory_pricing_created_byTousers")
+  inventory_pricing_inventory_pricing_deleted_byTousers                       inventory_pricing[]            @relation("inventory_pricing_deleted_byTousers")
+  one_time_cost_pricing_one_time_cost_pricing_created_byTousers               one_time_cost_pricing[]        @relation("one_time_cost_pricing_created_byTousers")
+  one_time_cost_pricing_one_time_cost_pricing_deleted_byTousers               one_time_cost_pricing[]        @relation("one_time_cost_pricing_deleted_byTousers")
+  parking_pricing_parking_pricing_created_byTousers                           parking_pricing[]              @relation("parking_pricing_created_byTousers")
+  parking_pricing_parking_pricing_deleted_byTousers                           parking_pricing[]              @relation("parking_pricing_deleted_byTousers")
+  primary_pricing_primary_pricing_created_byTousers                           primary_pricing[]              @relation("primary_pricing_created_byTousers")
+  primary_pricing_primary_pricing_deleted_byTousers                           primary_pricing[]              @relation("primary_pricing_deleted_byTousers")
+  property_units_property_units_created_byTousers                             property_units[]               @relation("property_units_created_byTousers")
+  property_units_property_units_deleted_byTousers                             property_units[]               @relation("property_units_deleted_byTousers")
+  quotations                                                                  quotations?
+  quoted_inventory_pricing_quoted_inventory_pricing_created_byTousers         quoted_inventory_pricing[]     @relation("quoted_inventory_pricing_created_byTousers")
+  quoted_inventory_pricing_quoted_inventory_pricing_deleted_byTousers         quoted_inventory_pricing[]     @relation("quoted_inventory_pricing_deleted_byTousers")
+  quoted_one_time_cost_pricing_quoted_one_time_cost_pricing_created_byTousers quoted_one_time_cost_pricing[] @relation("quoted_one_time_cost_pricing_created_byTousers")
+  quoted_one_time_cost_pricing_quoted_one_time_cost_pricing_deleted_byTousers quoted_one_time_cost_pricing[] @relation("quoted_one_time_cost_pricing_deleted_byTousers")
+  quoted_parking_pricing_quoted_parking_pricing_created_byTousers             quoted_parking_pricing[]       @relation("quoted_parking_pricing_created_byTousers")
+  quoted_parking_pricing_quoted_parking_pricing_deleted_byTousers             quoted_parking_pricing[]       @relation("quoted_parking_pricing_deleted_byTousers")
+  quoted_primary_pricing_quoted_primary_pricing_created_byTousers             quoted_primary_pricing[]       @relation("quoted_primary_pricing_created_byTousers")
+  quoted_primary_pricing_quoted_primary_pricing_deleted_byTousers             quoted_primary_pricing[]       @relation("quoted_primary_pricing_deleted_byTousers")
+  quoted_refundables_pricing_quoted_refundables_pricing_created_byTousers     quoted_refundables_pricing[]   @relation("quoted_refundables_pricing_created_byTousers")
+  quoted_refundables_pricing_quoted_refundables_pricing_deleted_byTousers     quoted_refundables_pricing[]   @relation("quoted_refundables_pricing_deleted_byTousers")
+  quoted_secondary_pricing_quoted_secondary_pricing_created_byTousers         quoted_secondary_pricing[]     @relation("quoted_secondary_pricing_created_byTousers")
+  quoted_secondary_pricing_quoted_secondary_pricing_deleted_byTousers         quoted_secondary_pricing[]     @relation("quoted_secondary_pricing_deleted_byTousers")
+  refundables_pricing_refundables_pricing_created_byTousers                   refundables_pricing[]          @relation("refundables_pricing_created_byTousers")
+  refundables_pricing_refundables_pricing_deleted_byTousers                   refundables_pricing[]          @relation("refundables_pricing_deleted_byTousers")
+  secondary_pricing_secondary_pricing_created_byTousers                       secondary_pricing[]            @relation("secondary_pricing_created_byTousers")
+  secondary_pricing_secondary_pricing_deleted_byTousers                       secondary_pricing[]            @relation("secondary_pricing_deleted_byTousers")
+}
+
+model utilities {
+  id                             String                           @id @db.Uuid  @default(uuid())
+  name                           String?                          @db.VarChar
+  price                          Decimal?                         @db.Decimal(10, 2)
+  is_free                        Boolean?
+  deleted_at                     DateTime?                        @db.Timestamp(6)
+  deleted_by                     String?                          @db.Uuid
+  created_by                     String?                          @db.Uuid
+  created_at                     DateTime?                        @db.Timestamp(6)
+  is_active                      Boolean?                         @default(true)
+  property_unit_utilities        property_unit_utilities[]
+  quoted_property_unit_utilities quoted_property_unit_utilities[]
+}
