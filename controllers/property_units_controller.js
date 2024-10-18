@@ -4,7 +4,7 @@ exports.getAllUnits = async (req, res) => {
   try {
     const result = await prisma.property_units.findMany({
       include: {
-        primary_pricing: true,
+        primary_pricing:true,
         secondary_pricing: true,
         one_time_cost_pricing: true,
         refundables_pricing: true,
@@ -21,15 +21,17 @@ exports.getAllUnits = async (req, res) => {
       // Convert decimal strings to floats
       const convertDecimalToFloat = (pricing) => {
         if (!pricing) return pricing;
+        delete pricing.id
         return {
           ...pricing,
-          uom_value: parseFloat(pricing.uom_value),
-          maximum: pricing.maximum ? parseFloat(pricing.maximum) : null,
-          minimum: pricing.minimum ? parseFloat(pricing.minimum) : null,
-          recommended: pricing.recommended ? parseFloat(pricing.recommended) : null,
-          discount: pricing.discount ? parseFloat(pricing.discount) : null,
-          item_unit_price: pricing.item_unit_price ? parseFloat(pricing.item_unit_price) : null,
+          ...(pricing.uom_value !== null && pricing.uom_value !== undefined && { uom_value: parseFloat(pricing.uom_value) }),
+          ...(pricing.maximum !== null && pricing.maximum !== undefined && { maximum: parseFloat(pricing.maximum) }),
+          ...(pricing.minimum !== null && pricing.minimum !== undefined && { minimum: parseFloat(pricing.minimum) }),
+          ...(pricing.recommended !== null && pricing.recommended !== undefined && { recommended: parseFloat(pricing.recommended) }),
+          ...(pricing.discount !== null && pricing.discount !== undefined && { discount: parseFloat(pricing.discount) }),
+          ...(pricing.item_unit_price !== null && pricing.item_unit_price !== undefined && { item_unit_price: parseFloat(pricing.item_unit_price) })
         };
+        
       };
     
       // Convert image_list string into an array

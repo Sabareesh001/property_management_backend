@@ -11,7 +11,7 @@ const componentBasedOnTypesRoutes = require("../routes/component_based_on_type_r
 const pricingBasedOnTypesRoutes = require("../routes/pricing_based_on_type_routes.js");
 const amenitiesRoutes = require("../routes/amenities_routes.js");
 const utilitiesRoutes = require("../routes/utilities_routes.js");
-
+const quotationRoutes = require("../routes/quotation_routes.js");
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -26,7 +26,8 @@ app.use(
   componentBasedOnTypesRoutes,
   pricingBasedOnTypesRoutes,
   amenitiesRoutes,
-  utilitiesRoutes
+  utilitiesRoutes,
+  quotationRoutes
 );
 app.listen(process.env.PORT, () => {
   console.log(`server is listening to port ${process.env.PORT}`);

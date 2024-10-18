@@ -1,6 +1,6 @@
 const prisma =  require('../../model/prisma.js');
 
-const createUsers = async()=>{
+const seed = async()=>{const createUsers = async()=>{
       await prisma.users.create({data:{name:"Sabareesh",mobile_no:"9888888888",email:"sabareesh.cs22@bitsathy.ac.in",created_at:new Date(),is_active:true}})
 }
 
@@ -273,10 +273,14 @@ const createPropertyUnits = async (
     
 
 
-createUsers();
-createMasterRevenueType();
-createMasterPricingComponentTypes();
-createMasterComponentsBasedOn();
-createMasterPricingBasedOn();
-createMasterGroups();
-createCompany();
+await createMasterRevenueType();
+await createMasterPricingComponentTypes();
+await createMasterComponentsBasedOn();
+await createMasterPricingBasedOn();
+await createMasterGroups();
+await createUsers();
+await createCompany();
+}
+
+
+seed();
