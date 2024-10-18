@@ -7,14 +7,14 @@ exports.createQuotation = async (req, res) => {
   try {
     const quotation = await prisma.quotations.create({
       data: {
-        user_id: reqData?.user,
+        user_id: reqData?.user_id,
         lease_end_date: reqData.quotation_details.lease_end_date,
         lease_start_date: reqData.quotation_details.lease_start_date,
-        rent_start_date:reqData.quotation_details.rent_start_date,
-        grace_period:reqData.quotation_details.grace_period,
+        rent_start_date: reqData.quotation_details.rent_start_date,
+        grace_period: reqData.quotation_details.grace_period,
       },
     });
-    for (const data of reqData) {
+    for (const data of reqData.unitsData) {
       try {
         const quoted_pricings = await prisma.$transaction([
           prisma.quoted_primary_pricing.create({ data: data?.primary_pricing }),
@@ -80,6 +80,13 @@ exports.createQuotation = async (req, res) => {
           }),
           prisma.quoted_property_unit_utilities.createMany({
             data: utilitiesEntryData,
+          }),
+          prisma.quotation_quoted_properties.create({
+            data: {
+              quoted_property_id: quoted_pricings[6]?.id,
+              original_property_id: data?.id,
+              quotation_id : quotation.id
+            },
           }),
         ]);
 
