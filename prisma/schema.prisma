@@ -20,10 +20,13 @@ model admins {
 }
 
 model amenities {
-  id                             String  @default(uuid())                          @id @db.Uuid
+  id                             String                           @id @db.Uuid @default(uuid())
   name                           String?                          @db.VarChar
+  image                           String?                          @db.VarChar
   price                          Decimal?                         @db.Decimal(10, 2)
   is_free                        Boolean?
+  start_date                    DateTime?                        @db.Timestamp(6)
+  end_date                    DateTime?                        @db.Timestamp(6)
   deleted_at                     DateTime?                        @db.Timestamp(6)
   deleted_by                     String?                          @db.Uuid
   created_by                     String?                          @db.Uuid
@@ -49,7 +52,7 @@ model inventory_pricing {
   revenue_type                              Int
   pricing_component                         Int
   tax_group                                 Int
-  component_based_on                        Int
+  pricing_based_on                          Int
   item_unit_price                           Decimal?                       @db.Decimal(10, 2)
   quantity                                  Int?
   discount                                  Decimal?                       @db.Decimal(10, 2)
@@ -58,9 +61,9 @@ model inventory_pricing {
   created_by                                String?                        @db.Uuid
   created_at                                DateTime?                      @db.Timestamp(6)
   is_active                                 Boolean?                       @default(true)
-  master_components_based_ons               master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_inventory_pricing_created_byTousers users?                         @relation("inventory_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_inventory_pricing_deleted_byTousers users?                         @relation("inventory_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_based_on                   master_pricing_based_on        @relation(fields: [pricing_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_pricing_component_types            master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_revenue_types                      master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_tax_groups                         master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -68,14 +71,12 @@ model inventory_pricing {
 }
 
 model master_components_based_ons {
-  id                           Int                            @id @default(autoincrement()) 
+  id                           Int                            @id @default(autoincrement())
   name                         String?                        @db.VarChar
   is_active                    Boolean?                       @default(true)
-  inventory_pricing            inventory_pricing[]
   one_time_cost_pricing        one_time_cost_pricing[]
   parking_pricing              parking_pricing[]
   primary_pricing              primary_pricing[]
-  quoted_inventory_pricing     quoted_inventory_pricing[]
   quoted_one_time_cost_pricing quoted_one_time_cost_pricing[]
   quoted_parking_pricing       quoted_parking_pricing[]
   quoted_primary_pricing       quoted_primary_pricing[]
@@ -83,6 +84,14 @@ model master_components_based_ons {
   quoted_secondary_pricing     quoted_secondary_pricing[]
   refundables_pricing          refundables_pricing[]
   secondary_pricing            secondary_pricing[]
+}
+
+model master_pricing_based_on {
+  id                       Int                        @id @default(autoincrement())
+  name                     String?                    @db.VarChar
+  is_active                Boolean?                   @default(true)
+  inventory_pricing        inventory_pricing[]
+  quoted_inventory_pricing quoted_inventory_pricing[]
 }
 
 model master_pricing_component_types {
@@ -139,7 +148,7 @@ model master_tax_groups {
   secondary_pricing            secondary_pricing[]
 }
 
-model one_time_cost_pricing {
+model one_time_cost_pricing { 
   id                                            String                         @id @db.Uuid @default(uuid())
   revenue_type                                  Int
   pricing_component                             Int
@@ -186,7 +195,7 @@ model parking_pricing {
 
 model primary_pricing {
   id                                      String                         @id @db.Uuid @default(uuid())
-  revenue_type                            Int 
+  revenue_type                            Int
   pricing_component                       Int
   tax_group                               Int
   component_based_on                      Int
@@ -210,7 +219,7 @@ model primary_pricing {
 }
 
 model property_unit_amenities {
-  id               String         @id @db.Uuid  @default(uuid())
+  id               String         @id @db.Uuid @default(uuid())
   property_unit_id String         @db.Uuid
   amenity_id       String         @db.Uuid
   deleted_at       DateTime?      @db.Timestamp(6)
@@ -223,7 +232,7 @@ model property_unit_amenities {
 }
 
 model property_unit_utilities {
-  id               String         @unique @db.Uuid  @default(uuid())
+  id               String         @unique @db.Uuid @default(uuid())
   property_unit_id String         @db.Uuid
   utility_id       String         @db.Uuid
   deleted_at       DateTime?      @db.Timestamp(6)
@@ -236,7 +245,7 @@ model property_unit_utilities {
 }
 
 model property_units {
-  id                                     String                    @id @db.Uuid  @default(uuid())
+  id                                     String                    @id @db.Uuid @default(uuid())
   name                                   String?                   @db.VarChar
   unit_id                                String?                   @db.VarChar
   address                                String?                   @db.VarChar
@@ -295,11 +304,11 @@ model quotations {
 }
 
 model quoted_inventory_pricing {
-  id                                               String                         @id @db.Uuid  @default(uuid())
+  id                                               String                         @id @db.Uuid @default(uuid())
   revenue_type                                     Int
   pricing_component                                Int
   tax_group                                        Int
-  component_based_on                               Int
+  pricing_based_on                                 Int
   item_unit_price                                  Decimal?                       @db.Decimal(10, 2)
   quantity                                         Int?
   discount                                         Decimal?                       @db.Decimal(10, 2)
@@ -308,16 +317,16 @@ model quoted_inventory_pricing {
   created_by                                       String?                        @db.Uuid
   created_at                                       DateTime?                      @db.Timestamp(6)
   is_active                                        Boolean?                       @default(true)
-  master_components_based_ons                      master_components_based_ons    @relation(fields: [component_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_quoted_inventory_pricing_created_byTousers users?                         @relation("quoted_inventory_pricing_created_byTousers", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_quoted_inventory_pricing_deleted_byTousers users?                         @relation("quoted_inventory_pricing_deleted_byTousers", fields: [deleted_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  master_pricing_based_on                          master_pricing_based_on        @relation(fields: [pricing_based_on], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_pricing_component_types                   master_pricing_component_types @relation(fields: [pricing_component], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_revenue_types                             master_revenue_types           @relation(fields: [revenue_type], references: [id], onDelete: NoAction, onUpdate: NoAction)
   master_tax_groups                                master_tax_groups              @relation(fields: [tax_group], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model quoted_one_time_cost_pricing {
-  id                                                   String                         @id @db.Uuid  @default(uuid())
+  id                                                   String                         @id @db.Uuid @default(uuid())
   revenue_type                                         Int
   pricing_component                                    Int
   tax_group                                            Int
@@ -339,7 +348,7 @@ model quoted_one_time_cost_pricing {
 }
 
 model quoted_parking_pricing {
-  id                                             String                         @id @db.Uuid  @default(uuid())
+  id                                             String                         @id @db.Uuid @default(uuid())
   revenue_type                                   Int
   pricing_component                              Int
   tax_group                                      Int
@@ -362,7 +371,7 @@ model quoted_parking_pricing {
 }
 
 model quoted_primary_pricing {
-  id                                             String                         @id @db.Uuid  @default(uuid())
+  id                                             String                         @id @db.Uuid @default(uuid())
   revenue_type                                   Int
   pricing_component                              Int
   tax_group                                      Int
@@ -387,7 +396,7 @@ model quoted_primary_pricing {
 }
 
 model quoted_property_unit_amenities {
-  id                      String                @id @db.Uuid  @default(uuid())
+  id                      String                @id @db.Uuid @default(uuid())
   quoted_property_unit_id String                @db.Uuid
   amenity_id              String                @db.Uuid
   is_free                 Boolean?
@@ -401,7 +410,7 @@ model quoted_property_unit_amenities {
 }
 
 model quoted_property_unit_utilities {
-  id                      String                @id @db.Uuid  @default(uuid())
+  id                      String                @id @db.Uuid @default(uuid())
   quoted_property_unit_id String                @db.Uuid
   utility_id              String                @db.Uuid
   is_free                 Boolean?
@@ -415,7 +424,7 @@ model quoted_property_unit_utilities {
 }
 
 model quoted_property_units {
-  id                             String                           @id @db.Uuid  @default(uuid())
+  id                             String                           @id @db.Uuid @default(uuid())
   name                           String?                          @db.VarChar
   property_id                    String                           @unique @db.Uuid
   unit_id                        String?                          @db.VarChar
@@ -452,7 +461,7 @@ model quoted_property_units {
 }
 
 model quoted_refundables_pricing {
-  id                                                 String                         @id @db.Uuid  @default(uuid())
+  id                                                 String                         @id @db.Uuid @default(uuid())
   revenue_type                                       Int
   pricing_component                                  Int
   tax_group                                          Int
@@ -474,7 +483,7 @@ model quoted_refundables_pricing {
 }
 
 model quoted_secondary_pricing {
-  id                                               String                         @id @db.Uuid  @default(uuid())
+  id                                               String                         @id @db.Uuid @default(uuid())
   revenue_type                                     Int
   pricing_component                                Int
   tax_group                                        Int
@@ -496,7 +505,7 @@ model quoted_secondary_pricing {
 }
 
 model refundables_pricing {
-  id                                          String                         @id @db.Uuid  @default(uuid())
+  id                                          String                         @id @db.Uuid @default(uuid())
   revenue_type                                Int
   pricing_component                           Int
   tax_group                                   Int
@@ -518,7 +527,7 @@ model refundables_pricing {
 }
 
 model secondary_pricing {
-  id                                        String                         @id @db.Uuid  @default(uuid())
+  id                                        String                         @id @db.Uuid @default(uuid())
   revenue_type                              Int
   pricing_component                         Int
   tax_group                                 Int
@@ -540,7 +549,7 @@ model secondary_pricing {
 }
 
 model users {
-  id                                                                          String                         @id @db.Uuid  @default(uuid())
+  id                                                                          String                         @id @db.Uuid @default(uuid())
   name                                                                        String?                        @db.VarChar
   mobile_no                                                                   String?                        @db.VarChar
   email                                                                       String?                        @db.VarChar
@@ -581,10 +590,13 @@ model users {
 }
 
 model utilities {
-  id                             String                           @id @db.Uuid  @default(uuid())
+  id                             String                           @id @db.Uuid @default(uuid())
   name                           String?                          @db.VarChar
+  image                           String?                          @db.VarChar
   price                          Decimal?                         @db.Decimal(10, 2)
   is_free                        Boolean?
+  start_date                    DateTime?                        @db.Timestamp(6)
+  end_date                    DateTime?                        @db.Timestamp(6)
   deleted_at                     DateTime?                        @db.Timestamp(6)
   deleted_by                     String?                          @db.Uuid
   created_by                     String?                          @db.Uuid

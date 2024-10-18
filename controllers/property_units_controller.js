@@ -31,7 +31,7 @@ exports.getAllUnits = async (req, res) => {
           item_unit_price: pricing.item_unit_price ? parseFloat(pricing.item_unit_price) : null,
         };
       };
-
+    
       // Convert image_list string into an array
       const imageListArray = unit.image_list ? unit.image_list.split(",") : [];
 
@@ -44,7 +44,9 @@ exports.getAllUnits = async (req, res) => {
         refundables_pricing: convertDecimalToFloat(unit.refundables_pricing),
         inventory_pricing: convertDecimalToFloat(unit.inventory_pricing),
         parking_pricing: convertDecimalToFloat(unit.parking_pricing),
-        image_list: imageListArray,  // Convert image_list string into an array
+        image_list: imageListArray, 
+        amenities:[],
+        utilities:[]
       };
     });
 

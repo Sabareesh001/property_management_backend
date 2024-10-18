@@ -16,7 +16,10 @@ CREATE TABLE "admins" (
 CREATE TABLE "amenities" (
     "id" UUID NOT NULL,
     "name" VARCHAR,
+    "image" VARCHAR,
     "price" DECIMAL(10,2),
+     "start_date" TIMESTAMP(6),
+    "end_date" TIMESTAMP(6),
     "is_free" BOOLEAN,
     "deleted_at" TIMESTAMP(6),
     "deleted_by" UUID,
@@ -46,7 +49,7 @@ CREATE TABLE "inventory_pricing" (
     "revenue_type" INTEGER NOT NULL,
     "pricing_component" INTEGER NOT NULL,
     "tax_group" INTEGER NOT NULL,
-    "component_based_on" INTEGER NOT NULL,
+    "pricing_based_on" INTEGER NOT NULL,
     "item_unit_price" DECIMAL(10,2),
     "quantity" INTEGER,
     "discount" DECIMAL(10,2),
@@ -66,6 +69,15 @@ CREATE TABLE "master_components_based_ons" (
     "is_active" BOOLEAN DEFAULT true,
 
     CONSTRAINT "master_components_based_ons_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "master_pricing_based_on" (
+    "id" SERIAL NOT NULL,
+    "name" VARCHAR,
+    "is_active" BOOLEAN DEFAULT true,
+
+    CONSTRAINT "master_pricing_based_on_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -234,7 +246,7 @@ CREATE TABLE "quoted_inventory_pricing" (
     "revenue_type" INTEGER NOT NULL,
     "pricing_component" INTEGER NOT NULL,
     "tax_group" INTEGER NOT NULL,
-    "component_based_on" INTEGER NOT NULL,
+    "pricing_based_on" INTEGER NOT NULL,
     "item_unit_price" DECIMAL(10,2),
     "quantity" INTEGER,
     "discount" DECIMAL(10,2),
@@ -459,7 +471,10 @@ CREATE TABLE "utilities" (
     "id" UUID NOT NULL,
     "name" VARCHAR,
     "price" DECIMAL(10,2),
+    "image" VARCHAR,
     "is_free" BOOLEAN,
+    "start_date" TIMESTAMP(6),
+    "end_date" TIMESTAMP(6),
     "deleted_at" TIMESTAMP(6),
     "deleted_by" UUID,
     "created_by" UUID,
@@ -491,13 +506,13 @@ CREATE UNIQUE INDEX "quoted_property_units_primary_pricing_id_key" ON "quoted_pr
 ALTER TABLE "admins" ADD CONSTRAINT "admins_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "inventory_pricing" ADD CONSTRAINT "inventory_pricing_component_based_on_fkey" FOREIGN KEY ("component_based_on") REFERENCES "master_components_based_ons"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
 ALTER TABLE "inventory_pricing" ADD CONSTRAINT "inventory_pricing_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "inventory_pricing" ADD CONSTRAINT "inventory_pricing_deleted_by_fkey" FOREIGN KEY ("deleted_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "inventory_pricing" ADD CONSTRAINT "inventory_pricing_pricing_based_on_fkey" FOREIGN KEY ("pricing_based_on") REFERENCES "master_pricing_based_on"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "inventory_pricing" ADD CONSTRAINT "inventory_pricing_pricing_component_fkey" FOREIGN KEY ("pricing_component") REFERENCES "master_pricing_component_types"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -611,13 +626,13 @@ ALTER TABLE "quotations" ADD CONSTRAINT "quotations_quoted_property_id_fkey" FOR
 ALTER TABLE "quotations" ADD CONSTRAINT "quotations_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
-ALTER TABLE "quoted_inventory_pricing" ADD CONSTRAINT "quoted_inventory_pricing_component_based_on_fkey" FOREIGN KEY ("component_based_on") REFERENCES "master_components_based_ons"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- AddForeignKey
 ALTER TABLE "quoted_inventory_pricing" ADD CONSTRAINT "quoted_inventory_pricing_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "quoted_inventory_pricing" ADD CONSTRAINT "quoted_inventory_pricing_deleted_by_fkey" FOREIGN KEY ("deleted_by") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE "quoted_inventory_pricing" ADD CONSTRAINT "quoted_inventory_pricing_pricing_based_on_fkey" FOREIGN KEY ("pricing_based_on") REFERENCES "master_pricing_based_on"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE "quoted_inventory_pricing" ADD CONSTRAINT "quoted_inventory_pricing_pricing_component_fkey" FOREIGN KEY ("pricing_component") REFERENCES "master_pricing_component_types"("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
